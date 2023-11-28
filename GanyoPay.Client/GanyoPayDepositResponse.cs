@@ -3,4 +3,4 @@ public record GanyoPayDepositResponse(
     decimal Amount,
     Guid FormId,
     Uri RedirectUrl,
-    string ThirdPartyOrderN);
+    string ThirdPartyOrderNo);
