@@ -61,7 +61,7 @@ public class GanyoPayClientTests
     }
 
     [Fact]
-    public async Task 查詢存款單狀態()
+    public async Task 查詢存款單狀態_waiting()
     {
         var mockHttp = new MockHttpMessageHandler();
 
@@ -105,6 +105,100 @@ public class GanyoPayClientTests
         var actual = await sut.QueryDepositFormStatusAsync(customerId, privateKey, Guid.Parse("a2da47e3-04cc-4451-b600-279cc3a7bd8d"));
 
         Assert.Equal("waiting", actual);
+    }
+
+    [Fact]
+    public async Task 查詢存款單狀態_fail()
+    {
+        var mockHttp = new MockHttpMessageHandler();
+
+        var httpClient = mockHttp.ToHttpClient();
+        httpClient.BaseAddress = new Uri("https://www.enier13.com");
+
+        var signer = new GanyoPayHasher(NullLogger<GanyoPayHasher>.Instance);
+
+        var sut = new GanyoPayClient(httpClient, signer, NullLogger<GanyoPayClient>.Instance);
+
+        var customerId = "taiwan";
+        var privateKey = "e274026fbe9e6869fbf5e0350d2e42cd";
+
+        _ = mockHttp
+            .Expect(HttpMethod.Post, "https://www.enier13.com/api/pay_in/query")
+            .WithHeaders(new Dictionary<string, string>
+            {
+                { "Content-Type","application/x-www-form-urlencoded" }
+            })
+            .WithContent(await new FormUrlEncodedContent(new Dictionary<string, string>
+            {
+                { "customer_id", "taiwan" },
+                { "reference_number","7190d39b-9822-4294-a62f-383b516178fa" },
+                { "token", "ZZoUC6yTabWod7I9WbZX5lam70upi/kwgF6kSyPNplk=" }
+            }).ReadAsStringAsync().ConfigureAwait(false))
+            .Respond(HttpStatusCode.OK, new StringContent(
+                JsonSerializer.Serialize(new
+                {
+                    data = new
+                    {
+                        amount = "25000.00",
+                        reference_number = "7190d39b-9822-4294-a62f-383b516178fa",
+                        fee = "1125.00",
+                        custom_data = "4ucmqplxb029",
+                        result = "fail",
+                        token = "NghopC3c0lr0RxuXWdZ4VHMhAmt+pvw8ftYnuI7Yzio=",
+                    },
+                    ret_code = "SUCCESS"
+                })));
+
+        var actual = await sut.QueryDepositFormStatusAsync(customerId, privateKey, Guid.Parse("7190d39b-9822-4294-a62f-383b516178fa"));
+
+        Assert.Equal("fail", actual);
+    }
+
+    [Fact]
+    public async Task 查詢存款單狀態_success()
+    {
+        var mockHttp = new MockHttpMessageHandler();
+
+        var httpClient = mockHttp.ToHttpClient();
+        httpClient.BaseAddress = new Uri("https://www.enier13.com");
+
+        var signer = new GanyoPayHasher(NullLogger<GanyoPayHasher>.Instance);
+
+        var sut = new GanyoPayClient(httpClient, signer, NullLogger<GanyoPayClient>.Instance);
+
+        var customerId = "taiwan";
+        var privateKey = "e274026fbe9e6869fbf5e0350d2e42cd";
+
+        _ = mockHttp
+            .Expect(HttpMethod.Post, "https://www.enier13.com/api/pay_in/query")
+            .WithHeaders(new Dictionary<string, string>
+            {
+                { "Content-Type","application/x-www-form-urlencoded" }
+            })
+            .WithContent(await new FormUrlEncodedContent(new Dictionary<string, string>
+            {
+                { "customer_id", "taiwan" },
+                { "reference_number","a2da47e3-04cc-4451-b600-279cc3a7bd8d" },
+                { "token", "wKbGd8vV5eWZS2z+DbXyhRargJRXxZwg0H5qUfkoHaA=" }
+            }).ReadAsStringAsync().ConfigureAwait(false))
+            .Respond(HttpStatusCode.OK, new StringContent(
+                JsonSerializer.Serialize(new
+                {
+                    data = new
+                    {
+                        amount = "25000.00",
+                        reference_number = "a2da47e3-04cc-4451-b600-279cc3a7bd8d",
+                        fee = "1125.00",
+                        custom_data = "4ucmqplxb029",
+                        result = "success",
+                        token = "ySJT4ZvQIga1ay+UQ7tCBEEZSztmaE2Klbk++FH0Ptk=",
+                    },
+                    ret_code = "SUCCESS"
+                })));
+
+        var actual = await sut.QueryDepositFormStatusAsync(customerId, privateKey, Guid.Parse("a2da47e3-04cc-4451-b600-279cc3a7bd8d"));
+
+        Assert.Equal("success", actual);
     }
 
     [Fact]

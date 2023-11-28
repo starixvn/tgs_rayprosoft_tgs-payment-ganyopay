@@ -1,5 +1,4 @@
-﻿using System.Net.Mime;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Tgs.Payment.Clients;
 using Tgs.Payment.GanyoPay.ApplicationServices;
@@ -77,7 +76,7 @@ public class WithdrawController : ControllerBase
                     await fsm.FireAsync(PaymentTrigger.PaymentWithdrawCompleted).ConfigureAwait(false);
 
                     await paymentServiceClient.SubmitWithdrawFormStatusAsync(
-                    withdrawForm.Id,
+                        withdrawForm.Id,
                         paymentReturn: JsonSerializer.Serialize(
                             paymentReturn,
                             GanyoPayUtility.SerializerOptions),
@@ -96,7 +95,7 @@ public class WithdrawController : ControllerBase
                     await fsm.FireAsync(PaymentTrigger.Reject).ConfigureAwait(false);
 
                     await paymentServiceClient.SubmitWithdrawFormStatusAsync(
-                    withdrawForm.Id,
+                        withdrawForm.Id,
                         paymentReturn: JsonSerializer.Serialize(
                             paymentReturn,
                             GanyoPayUtility.SerializerOptions),

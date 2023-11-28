@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
+﻿using System.Net;
 using System.Text.Json;
-using System.Threading.Tasks;
 using Google.Protobuf;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -17,6 +12,7 @@ using Tgs.Payment.GanyoPay.MessageQueue;
 using Tgs.Payment.Protos;
 
 namespace GanyoPay.Core.UnitTests;
+
 public class DepositProcessorTests
 {
     [Fact]
@@ -106,11 +102,12 @@ public class DepositProcessorTests
         var applyInfo = JsonSerializer.Deserialize<GanyoPayDepositApplyInfo>(response.Result, GanyoPayUtility.SerializerOptions);
 
         // Assert
-        //_ = fakePaymentClient.Received(1)
-        //    .ScheduleAsync(
-        //        Arg.Is("tgs.payment.ganyopay.deposit.schedule.reject"),
-        //        Arg.Is(applySettings.FormId),
-        //        Arg.Any<DateTime>());
+        _ = fakePaymentClient.Received(1)
+            .ScheduleAsync(
+                Arg.Is("tgs.payment.ganyopay.deposit.schedule.reject"),
+                Arg.Is(applySettings.FormId),
+                Arg.Any<DateTime>());
+
         Assert.NotNull(applyInfo);
         Assert.Equal(applySettings, applyInfo.Settings);
         Assert.Equal(

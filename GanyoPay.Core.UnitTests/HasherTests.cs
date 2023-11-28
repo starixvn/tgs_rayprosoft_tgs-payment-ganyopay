@@ -42,6 +42,25 @@ public class HasherTests
     }
 
     [Fact]
+    public void 查詢存款單1()
+    {
+        var key = "e274026fbe9e6869fbf5e0350d2e42cd";
+        var dict = new Dictionary<string, string?>
+        {
+            ["customer_id"] = "taiwan",
+            ["reference_number"] = "7190d39b-9822-4294-a62f-383b516178fa",
+        };
+
+        var expected = "ZZoUC6yTabWod7I9WbZX5lam70upi/kwgF6kSyPNplk=";
+
+        var sut = new GanyoPayHasher(NullLogger<GanyoPayHasher>.Instance);
+
+        var actual = sut.ComputeHash(key, dict);
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
     public void 存款()
     {
         var key = "e274026fbe9e6869fbf5e0350d2e42cd";
@@ -125,7 +144,7 @@ public class HasherTests
             ["reference_number"] = "211f4bda-86aa-4261-9099-83c1b2303ac7",
             ["fee"] = "25.00",
             ["custom_data"] = "",
-            ["result"] = "success",            
+            ["result"] = "success",
             ["token"] = "3ZUR+0vMY2e7O+21DNpbCx7fBHAHhrpGKmUpzX4J/co=",
         };
 

@@ -54,11 +54,11 @@ internal class DepositProcessor : IMessageProcessor
                 depositResponse.RedirectUrl,
                 depositResponse.ThirdPartyOrderNo));
 
-        //await _paymentClient.ScheduleAsync(
-        //    "tgs.payment.ganyopay.deposit.schedule.reject",
-        //    settings.FormId,
-        //    DateTime.UtcNow.AddMinutes(9D),
-        //    cancellationToken).ConfigureAwait(false);
+        await _paymentClient.ScheduleAsync(
+            "tgs.payment.ganyopay.deposit.schedule.reject",
+            settings.FormId,
+            DateTime.UtcNow.AddMinutes(31D),
+            cancellationToken).ConfigureAwait(false);
 
         var msg = new DepositResponse
         {
